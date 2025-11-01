@@ -16,10 +16,15 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate timestamp tag
+        id: timestamp
+        run: echo "tag=$(date +%Y%m%d-%H%M%S)-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Build and push backend
         uses: docker/build-push-action@v4
         with:
           context: .
           file: ./docker/Dockerfile.backend
           push: true
-          tags: ghcr.io/defintech/nofx-backend:latest
+          tags: |
+            ghcr.io/defintech/nofx-backend:latest
+            ghcr.io/defintech/nofx-backend:${{ steps.timestamp.outputs.tag }}
