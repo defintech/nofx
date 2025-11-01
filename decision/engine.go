@@ -221,7 +221,7 @@ func buildSystemPrompt(accountEquity float64, btcEthLeverage, altcoinLeverage in
 	// === 硬约束（风险控制）===
 	sb.WriteString("# ⚖️ 硬约束（风险控制）\n\n")
 	sb.WriteString("1. **风险回报比**: 必须 ≥ 1:3（冒1%风险，赚3%+收益）\n")
-	sb.WriteString("2. **最多持仓**: 3个币种（质量>数量）\n")
+	sb.WriteString("2. **最多持仓**: 1个币种（质量>数量）\n")
 	sb.WriteString(fmt.Sprintf("3. **单币仓位**: 山寨%.0f-%.0f U(%dx杠杆) | BTC/ETH %.0f-%.0f U(%dx杠杆)\n",
 		accountEquity*0.8, accountEquity*1.5, altcoinLeverage, accountEquity*5, accountEquity*10, btcEthLeverage))
 	sb.WriteString("4. **保证金**: 总使用率 ≤ 90%\n\n")
@@ -247,6 +247,7 @@ func buildSystemPrompt(accountEquity float64, btcEthLeverage, altcoinLeverage in
 	// === 开仓信号强度 ===
 	sb.WriteString("# 🎯 开仓标准（严格）\n\n")
 	sb.WriteString("只在**强信号**时开仓，不确定就观望。\n\n")
+	sb.WriteString("**上涨必有回调，下跌必有反弹**，耐心等待交易时机，一定要在接近支撑位做多/平空，接近压力位做空/平多。\n\n")
 	sb.WriteString("**你拥有的完整数据**：\n")
 	sb.WriteString("- 📊 **原始序列**：3分钟价格序列(MidPrices数组) + 4小时K线序列\n")
 	sb.WriteString("- 📈 **技术序列**：EMA20序列、MACD序列、RSI7序列、RSI14序列\n")
