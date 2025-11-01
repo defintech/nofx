@@ -1,0 +1,46 @@
+name: Build web & Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  NODE_ENV: production
+  FAST_REFRESH: false
+
+jobs:
+  build-client:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set Node.js 22
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install --production=false
+
+      - name: Build client
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: build
+
+      - name: Deploy cloudflare pages
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy build --project-name=nofx-web
+
+      - name: Print deployment-url
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
+        run: echo $DEPLOYMENT_URL

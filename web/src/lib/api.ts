@@ -8,7 +8,7 @@ import type {
   CompetitionData,
 } from '../types';
 
-const API_BASE = '/api';
+const API_BASE = 'https://nofapi.2ha.fun/api';
 
 export const api = {
   // 竞赛相关接口
