@@ -1,36 +1,33 @@
-name: Build web & Deploy
+name: Deploy Frontend to Cloudflare Pages
 
 on:
   push:
     branches:
       - main
-
-env:
-  NODE_ENV: production
-  FAST_REFRESH: false
+    # 只在 web 目录或此工作流文件本身发生变化时触发
+    paths:
+      - 'web/**'
+      - '.github/workflows/deploy-web.yml'
 
 jobs:
-  build-client:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set Node.js 22
-        uses: actions/setup-node@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: Run install
-        uses: borales/actions-yarn@v4
-        with:
-          cmd: install --production=false
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./web
 
-      - name: Build client
-        uses: borales/actions-yarn@v4
-        with:
-          cmd: build
+      - name: Build
+        run: npm run build
+        working-directory: ./web
 
       - name: Deploy cloudflare pages
         id: deploy
@@ -38,7 +35,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy build --project-name=nofx-web
+          command: pages deploy web/dist --project-name=nofx-web
 
       - name: Print deployment-url
         env:
